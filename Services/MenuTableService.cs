@@ -2,7 +2,7 @@
 using Azure.Data.Tables;
 using CoffeeNChill.Functions.Models;
 
-namespace CoffeeNChill_Part1.Services
+namespace CoffeeNChill_Part1.Services;
 
 public class MenuTableService : IMenuTableService
 {
