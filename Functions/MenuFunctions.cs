@@ -137,4 +137,117 @@ public class MenuFunctions
 
         return responseOk;
     }
+
+    // PUT /api/menu/{category}/{id}
+    // Updates the price or availability of a menu item
+    [Function("UpdateMenuItem")]
+    public async Task<HttpResponseData> UpdateMenuItem(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "menu/{category}/{id}")] HttpRequestData req,
+        string category,
+        string id)
+    {
+        // Check that the category and ID were provided
+        if (string.IsNullOrWhiteSpace(category) ||
+            string.IsNullOrWhiteSpace(id))
+        {
+            var badResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+            await badResponse.WriteStringAsync("Category and ID are required.");
+
+            return badResponse;
+        }
+
+        UpdateMenuItemDto? updateData;
+
+        try
+        {
+            // Read the update information from the request
+            updateData = await JsonSerializer.DeserializeAsync<UpdateMenuItemDto>(req.Body);
+        }
+        catch (JsonException)
+        {
+            // Return an error if the JSON is invalid
+            var badResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+            await badResponse.WriteStringAsync("Invalid JSON.");
+
+            return badResponse;
+        }
+
+        // Check that update data was provided
+        if (updateData == null)
+        {
+            var badResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+            await badResponse.WriteStringAsync("Update data is required.");
+
+            return badResponse;
+        }
+
+        // Check that the price is not negative
+        if (updateData.Price.HasValue && updateData.Price.Value < 0)
+        {
+            var badResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+            await badResponse.WriteStringAsync("Price cannot be negative.");
+
+            return badResponse;
+        }
+
+        try
+        {
+            // Update the menu item using the service
+            var updatedItem = await _menuService.UpdateAsync(
+                category,
+                id,
+                updateData);
+
+            // Return the updated menu item
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            await response.WriteAsJsonAsync(updatedItem);
+
+            return response;
+        }
+        catch (KeyNotFoundException)
+        {
+            // Return 404 if the menu item does not exist
+            var response = req.CreateResponse(HttpStatusCode.NotFound);
+            await response.WriteStringAsync("Menu item not found.");
+
+            return response;
+        }
+    }
+
+    // DELETE /api/menu/{category}/{id}
+    // Deletes a menu item
+    [Function("DeleteMenuItem")]
+    public async Task<HttpResponseData> DeleteMenuItem(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "menu/{category}/{id}")] HttpRequestData req,
+        string category,
+        string id)
+    {
+        // Check that the category and ID were provided
+        if (string.IsNullOrWhiteSpace(category) ||
+            string.IsNullOrWhiteSpace(id))
+        {
+            var badResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+            await badResponse.WriteStringAsync("Category and ID are required.");
+
+            return badResponse;
+        }
+
+        try
+        {
+            // Delete the menu item from Azure Table Storage
+            await _menuService.DeleteAsync(category, id);
+
+            // Return a successful response
+            var response = req.CreateResponse(HttpStatusCode.NoContent);
+            return response;
+        }
+        catch (Azure.RequestFailedException ex) when (ex.Status == 404)
+        {
+            // Return 404 if the menu item does not exist
+            var response = req.CreateResponse(HttpStatusCode.NotFound);
+            await response.WriteStringAsync("Menu item not found.");
+
+            return response;
+        }
+    }
 }
