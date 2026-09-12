@@ -95,4 +95,46 @@ public class MenuFunctions
             return response;
         }
     }
+
+    // GET /api/menu
+    // Gets all menu items from the MenuItems table
+    [Function("GetAllMenuItems")]
+    public async Task<HttpResponseData> GetAllMenuItems(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "menu")] HttpRequestData req)
+    {
+        // Get all menu items from the service
+        var items = await _menuService.GetAllAsync();
+
+        // Return the menu items with a 200 OK response
+        var response = req.CreateResponse(HttpStatusCode.OK);
+        await response.WriteAsJsonAsync(items);
+
+        return response;
+    }
+
+    // GET /api/menu/category/{category}
+    // Gets menu items that belong to a specific category
+    [Function("GetMenuItemsByCategory")]
+    public async Task<HttpResponseData> GetMenuItemsByCategory(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "menu/category/{category}")] HttpRequestData req,
+        string category)
+    {
+        // Check that a category was provided
+        if (string.IsNullOrWhiteSpace(category))
+        {
+            var response = req.CreateResponse(HttpStatusCode.BadRequest);
+            await response.WriteStringAsync("Category is required.");
+
+            return response;
+        }
+
+        // Get menu items for the selected category
+        var items = await _menuService.GetByCategoryAsync(category);
+
+        // Return the filtered menu items
+        var responseOk = req.CreateResponse(HttpStatusCode.OK);
+        await responseOk.WriteAsJsonAsync(items);
+
+        return responseOk;
+    }
 }
