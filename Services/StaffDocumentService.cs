@@ -1,68 +1,120 @@
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
+using Azure;
+using Azure.Storage.Files.Shares;
+using Azure.Storage.Files.Shares.Models;
 using CoffeeNChill.Functions.Models;
 
 namespace CoffeeNChill.Functions.Services;
 
 public class StaffDocumentService : IStaffDocumentService
 {
-    private const string ContainerName = "staff-docs";
-    private readonly BlobContainerClient _containerClient;
+    private const string ShareName = "staff-docs";
 
-    public StaffDocumentService(BlobServiceClient blobServiceClient)
+    private readonly ShareDirectoryClient _directoryClient;
+
+    public StaffDocumentService(ShareServiceClient shareServiceClient)
     {
-        _containerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
-        _containerClient.CreateIfNotExists();
+        var shareClient = shareServiceClient.GetShareClient(ShareName);
+
+        shareClient.CreateIfNotExists();
+
+        _directoryClient = shareClient.GetRootDirectoryClient();
     }
 
-    public async Task<DocumentMetadata> UploadAsync(string fileName, Stream content, string contentType)
+    public async Task<DocumentMetadata> UploadAsync(
+        string fileName,
+        Stream content,
+        string contentType)
     {
-        var blobClient = _containerClient.GetBlobClient(fileName);
-        var headers = new BlobHttpHeaders { ContentType = contentType };
+        // Copy the uploaded file into memory
+        // so we know its size before creating the Azure File.
+        using var memoryStream = new MemoryStream();
 
-        // streams straight into blob storage instead of loading the whole file into memory first
-        await blobClient.UploadAsync(content, new BlobUploadOptions { HttpHeaders = headers });
+        await content.CopyToAsync(memoryStream);
 
-        var props = await blobClient.GetPropertiesAsync();
+        memoryStream.Position = 0;
+
+        var fileClient =
+            _directoryClient.GetFileClient(fileName);
+
+        // Create the file with the correct size.
+        await fileClient.CreateAsync(
+            memoryStream.Length,
+            new ShareFileCreateOptions
+            {
+                HttpHeaders = new ShareFileHttpHeaders
+                {
+                    ContentType = contentType
+                }
+            });
+
+        // Upload the file contents.
+        await fileClient.UploadRangeAsync(
+            new HttpRange(0, memoryStream.Length),
+            memoryStream);
+
+        var properties =
+            await fileClient.GetPropertiesAsync();
+
         return new DocumentMetadata
         {
             FileName = fileName,
-            SizeInBytes = props.Value.ContentLength,
-            LastModified = props.Value.LastModified,
-            ContentType = props.Value.ContentType
+            SizeInBytes = properties.Value.ContentLength,
+            LastModified = properties.Value.LastModified,
+            ContentType = contentType
         };
     }
 
     public async Task<List<DocumentMetadata>> ListAsync()
     {
-        var docs = new List<DocumentMetadata>();
+        var documents = new List<DocumentMetadata>();
 
-        // grabs every blob in the container along with its metadata
-        await foreach (var blob in _containerClient.GetBlobsAsync())
+        await foreach (
+            var item in _directoryClient.GetFilesAndDirectoriesAsync())
         {
-            docs.Add(new DocumentMetadata
+            if (!item.IsDirectory)
             {
-                FileName = blob.Name,
-                SizeInBytes = blob.Properties.ContentLength ?? 0,
-                LastModified = blob.Properties.LastModified,
-                ContentType = blob.Properties.ContentType ?? "application/octet-stream"
-            });
+                var fileClient =
+                    _directoryClient.GetFileClient(item.Name);
+
+                var properties =
+                    await fileClient.GetPropertiesAsync();
+
+                documents.Add(new DocumentMetadata
+                {
+                    FileName = item.Name,
+                    SizeInBytes = properties.Value.ContentLength,
+                    LastModified = properties.Value.LastModified,
+                    ContentType =
+                        properties.Value.ContentType
+                        ?? "application/octet-stream"
+                });
+            }
         }
 
-        return docs;
+        return documents;
     }
 
-    public async Task<(Stream Content, string ContentType)?> DownloadAsync(string fileName)
+    public async Task<(Stream Content, string ContentType)?> DownloadAsync(
+        string fileName)
     {
-        var blobClient = _containerClient.GetBlobClient(fileName);
+        var fileClient =
+            _directoryClient.GetFileClient(fileName);
 
-        if (!await blobClient.ExistsAsync())
+        if (!await fileClient.ExistsAsync())
         {
             return null;
         }
 
-        // streamed back to the caller rather than buffered fully in memory
-        var download = await blobClient.DownloadStreamingAsync();
-        return (download.Value.Content, download.Value.Details.ContentType ?? "application/octet-stream");
+        var download =
+            await fileClient.DownloadAsync();
+
+        var properties =
+            await fileClient.GetPropertiesAsync();
+
+        return (
+            download.Value.Content,
+            properties.Value.ContentType
+            ?? "application/octet-stream"
+        );
     }
 }

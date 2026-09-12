@@ -1,24 +1,28 @@
-using Microsoft.Azure.Functions.Worker.Builder;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Azure.Data.Tables;
-using Azure.Storage.Blobs;
+using Azure.Storage.Files.Shares;
 using CoffeeNChill.Functions.Services;
 using CoffeeNChill_Part1.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-var builder = FunctionsApplication.CreateBuilder(args);
+var host = new HostBuilder()
+    .ConfigureFunctionsWebApplication()
+    .ConfigureServices(services =>
+    {
+        string storageConnectionString =
+            Environment.GetEnvironmentVariable("AzureWebJobsStorage")
+            ?? "UseDevelopmentStorage=true";
 
-builder.ConfigureFunctionsWebApplication();
+        services.AddSingleton(
+            new TableServiceClient(storageConnectionString));
 
-// falls back to Azurite's well-known connection string if nothing is set locally
-var storageConnectionString =
-    Environment.GetEnvironmentVariable("AzureWebJobsStorage")
-    ?? "UseDevelopmentStorage=true";
+        services.AddSingleton(
+            new ShareServiceClient(storageConnectionString));
 
-builder.Services.AddSingleton(new TableServiceClient(storageConnectionString));
-builder.Services.AddSingleton(new BlobServiceClient(storageConnectionString));
+        services.AddSingleton<IMenuTableService, MenuTableService>();
 
-builder.Services.AddSingleton<IMenuTableService, MenuTableService>();
-builder.Services.AddSingleton<IStaffDocumentService, StaffDocumentService>();
+        services.AddSingleton<IStaffDocumentService, StaffDocumentService>();
+    })
+    .Build();
 
-builder.Build().Run();
+host.Run();
