@@ -15,12 +15,11 @@ var host = new HostBuilder()
             Environment.GetEnvironmentVariable("AzureWebJobsStorage")
             ?? "UseDevelopmentStorage=true";
 
-        // Full Azurite connection string for Azure Files
+        // Connection string for the Azure File Share
         string fileStorageConnectionString =
-            "DefaultEndpointsProtocol=http;" +
-            "AccountName=devstoreaccount1;" +
-            "AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;" +
-            "FileEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
+        Environment.GetEnvironmentVariable("AzureFilesConnectionString") 
+        ?? throw new InvalidOperationException(
+            "AzureFilesConnectionString is missing.");
 
         // Connect to Azure Table Storage
         services.AddSingleton(
