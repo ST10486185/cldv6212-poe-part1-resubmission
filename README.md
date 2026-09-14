@@ -49,7 +49,7 @@ CoffeeNChill_Part1
 
 ```
 
-Azure Table Storage
+## Azure Table Storage
 
 The project uses an Azure Table called 'MenuItems'
 
