@@ -125,10 +125,7 @@ A Dockerfile is included in the project, it is used to create a container image 
 
 ## Docker Hub
 
-The working Docker image has been uploaded to Docker Hub:
-<img width="1917" height="947" alt="image" src="https://github.com/user-attachments/assets/af21c308-eae1-4545-9c61-9124a3dd9dc3" />
 
-<img width="1915" height="927" alt="image" src="https://github.com/user-attachments/assets/6bb51c8d-0393-4973-9206-9a0708650bb7" />
 
 
 *Version:* V1.2
@@ -137,6 +134,10 @@ The working Docker image has been uploaded to Docker Hub:
 ```
 ---
 ---
+The working Docker image has been uploaded to Docker Hub:
+<img width="1917" height="947" alt="image" src="https://github.com/user-attachments/assets/af21c308-eae1-4545-9c61-9124a3dd9dc3" />
+
+<img width="1915" height="927" alt="image" src="https://github.com/user-attachments/assets/6bb51c8d-0393-4973-9206-9a0708650bb7" />
 
 ## Team Contributions
 
