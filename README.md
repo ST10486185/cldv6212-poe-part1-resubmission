@@ -47,6 +47,8 @@ CoffeeNChill_Part1
     local.settings.json
     CoffeeNChill_Part1.csproj
 
+```
+
 Azure Table Storage
 
 The project uses an Azure Table called 'MenuItems'
@@ -125,15 +127,12 @@ A Dockerfile is included in the project, it is used to create a container image 
 
 ## Docker Hub
 
-
-
-
 *Version:* V1.2
 
 *Docker Hub Repository: https://hub.docker.com/r/st10478074daelen/coffeenchill-functions/tags
-```
+
 ---
----
+
 The working Docker image has been uploaded to Docker Hub:
 <img width="1917" height="947" alt="image" src="https://github.com/user-attachments/assets/af21c308-eae1-4545-9c61-9124a3dd9dc3" />
 
