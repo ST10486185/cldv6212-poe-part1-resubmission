@@ -139,6 +139,8 @@ The working Docker image has been uploaded to Docker Hub:
 
 <img width="1915" height="927" alt="image" src="https://github.com/user-attachments/assets/6bb51c8d-0393-4973-9206-9a0708650bb7" />
 
+We forgot to show the Docker hub container running in the youtube video, these images provide evidence of it running.
+
 ## Team Contributions
 
 ### Ethan Gangadaran: ST10473828
