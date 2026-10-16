@@ -179,3 +179,15 @@ We forgot to show the Docker hub container running in the youtube video, these i
 Below is the link to the YouTube Demonstration Video:
 
 https://youtu.be/kcNTskiAIDw
+
+## References
+
+Microsoft (n.d.-a) *Azure Functions HTTP trigger*. Available at: https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger (Accessed: 12 September 2026).
+
+Microsoft (n.d.-b) *ITableEntity Interface*. Available at: https://learn.microsoft.com/en-us/dotnet/api/azure.data.tables.itableentity (Accessed: 11 September 2026).
+
+Microsoft (n.d.-c) *Interfaces (C# Programming Guide)*. Available at: https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/interfaces (Accessed: 11 September 2026).
+
+Microsoft (n.d.-d) *TableClient Class*. Available at: https://learn.microsoft.com/en-us/dotnet/api/azure.data.tables.tableclient (Accessed: 12 September 2026).
+
+Microsoft (n.d.-e) *Azure Storage File Shares client library for .NET*. Available at: https://learn.microsoft.com/en-us/dotnet/api/overview/azure/storage.files.shares-readme (Accessed: 11 September 2026).

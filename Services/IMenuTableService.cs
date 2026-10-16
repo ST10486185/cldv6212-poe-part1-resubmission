@@ -5,6 +5,10 @@ using System.Text;
 
 namespace CoffeeNChill_Part1.Services
 {
+
+    // Reference: Microsoft, n.d.-c
+    // https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/interfaces
+
     public interface IMenuTableService
     {
         // Create new menu item

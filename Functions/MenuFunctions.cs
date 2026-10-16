@@ -8,6 +8,9 @@ using Microsoft.Azure.Functions.Worker.Http;
 
 namespace CoffeeNChill.Functions;
 
+// Reference: Microsoft, n.d.-a
+// https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger
+
 public class MenuFunctions
 {
     // This connects the function to the menu table service

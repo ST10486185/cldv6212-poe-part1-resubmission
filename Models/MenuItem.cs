@@ -3,10 +3,15 @@ using Azure.Data.Tables;
 
 namespace CoffeeNChill.Functions.Models;
 
-/// <summary>
-/// Azure Table entity for the MenuItems table.
-/// PartitionKey = Category (e.g. "Hot Drinks"), RowKey = SKU (e.g. "COF-001").
-/// </summary>
+/*
+Azure Table entity for the MenuItems table.
+PartitionKey = Category (e.g. "Hot Drinks"), RowKey = SKU (e.g. "COF-001").
+
+// Reference: Microsoft, n.d.-b
+// https://learn.microsoft.com/en-us/dotnet/api/azure.data.tables.itableentity
+
+ */
+
 public class MenuItem : ITableEntity
 {
     public string PartitionKey { get; set; } = default!;

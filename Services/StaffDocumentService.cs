@@ -5,6 +5,9 @@ using CoffeeNChill.Functions.Models;
 
 namespace CoffeeNChill.Functions.Services;
 
+// Reference: Microsoft, n.d.-e
+// https://learn.microsoft.com/en-us/dotnet/api/overview/azure/storage.files.shares-readme
+
 public class StaffDocumentService : IStaffDocumentService
 {
     private const string ShareName = "staff-docs";

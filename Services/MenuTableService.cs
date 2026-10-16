@@ -4,6 +4,9 @@ using CoffeeNChill.Functions.Models;
 
 namespace CoffeeNChill_Part1.Services;
 
+// Reference: Microsoft, n.d.-d
+// https://learn.microsoft.com/en-us/dotnet/api/azure.data.tables.tableclient
+
 public class MenuTableService : IMenuTableService
 {
     private const string TableName = "MenuItems";

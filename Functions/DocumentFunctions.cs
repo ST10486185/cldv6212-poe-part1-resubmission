@@ -7,6 +7,9 @@ using CoffeeNChill.Functions.Services;
 
 namespace CoffeeNChill.Functions;
 
+// Reference: Microsoft, n.d.-a
+// https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger
+
 public class DocumentFunctions
 {
     // This connects the function to the staff document service

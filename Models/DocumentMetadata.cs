@@ -1,6 +1,6 @@
 ﻿namespace CoffeeNChill.Functions.Models;
 
-/// <summary>Metadata returned for staff-docs blob operations.</summary>
+// Metadata returned for staff-docs blob operations.
 public class DocumentMetadata
 {
     public string FileName { get; set; } = default!;

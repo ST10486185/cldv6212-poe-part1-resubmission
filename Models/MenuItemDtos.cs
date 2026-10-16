@@ -1,6 +1,6 @@
 ﻿namespace CoffeeNChill.Functions.Models;
 
-/// <summary>Request body for POST /api/menu.</summary>
+// Request body for POST /api/menu.
 public class CreateMenuItemDto
 {
     public string Category { get; set; } = default!;
@@ -11,7 +11,7 @@ public class CreateMenuItemDto
     public bool IsAvailable { get; set; } = true;
 }
 
-/// <summary>Request body for PUT /api/menu/{category}/{id}. Both fields optional.</summary>
+// Request body for PUT /api/menu/{category}/{id}. Both fields optional.
 public class UpdateMenuItemDto
 {
     public double? Price { get; set; }
